@@ -41,4 +41,8 @@ class Photo extends LongKeyedMapper[Photo] with IdPK{
     override def defaultValue = 0
   }
 
+  object comment extends MappedText(this){
+    override def defaultValue = ""
+  }
+
 }

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>Home</title>
+  </head>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+
+
+
+        <style type="text/css">
+            html { height: 100% }
+            body { height: 100%; margin: 0px; padding: 0px }
+            #map_canvas { height: 100% }
+        </style>
+
+        <script type="text/javascript" >
+
+            var points = [
+                {
+                    "latitude" : 35.71647786,
+                    "longitude" : 139.760593,
+                    "img": "https://www.google.co.jp/intl/ja_ALL/images/logos/images_logo_lg.gif"
+                },
+                {
+                    "latitude" : 35.71347786,
+                    "longitude" : 139.750593,
+                    "img": "https://www.google.co.jp/intl/ja_ALL/images/logos/images_logo_lg.gif"
+                }
+
+            ];
+
+            function initialize() {
+
+
+                var latlng = new google.maps.LatLng(35.71647786, 139.760593599);
+
+                var myOptions = {
+                    zoom: 15,
+                    center: latlng,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var map = new google.maps.Map(document.getElementById("map_canvas"),
+                        myOptions);
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "aaa"//'<img href="' + p[2] + '" />'
+                });
+
+                //var infoWindow = null;
+                for(i in points){
+                    var p = points[i];
+                    var pos = new google.maps.LatLng(p.latitude, p.longitude);
+
+                    var marker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title:"User uploaded"
+                    });
+                    marker.img = p.img;
+
+                    google.maps.event.addListener(marker, 'click', function(event) {
+
+                        infowindow.close();
+                        infowindow.setContent('aaa<img src="' + this.img + '" />');
+                        infowindow.open(map,this);
+                    });
+
+                }
+
+            }
+            $(function(){
+                initialize();
+            })
+
+        </script>
+        <div id="map_canvas" style="width:100%; height:400px;"></div>
+
+
+
+
+
+    </div>
+  </body>
+</html>
+

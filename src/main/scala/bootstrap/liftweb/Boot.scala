@@ -65,6 +65,8 @@ class Boot {
       Menu(Loc("SignUp" , "sign_up" :: Nil, "Sign up page" , Hidden)) ::
         Menu(LoginLoc("UploadPhoto"   , "photo" :: "upload" :: Nil  )) ::
         Menu(LoginLoc("PhotoList"   , "photo" :: "upload_list" :: Nil  )) ::
+        Menu(LoginLoc("PhotoEdit"   , "photo" :: "photo_edit" :: Nil  )) ::
+        Menu(LoginLoc("PhotoMap"   , "photo" :: "uploaded_map" :: Nil  )) ::
 
       // more complex because this menu allows anything in the
       // /static path to be visible
