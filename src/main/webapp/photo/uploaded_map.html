@@ -31,6 +31,10 @@
 
             ];
 
+            var infoWindow = null;
+            var map = null;
+            var lastLatLng = [0,0];
+
             function initialize() {
 
 
@@ -41,14 +45,44 @@
                     center: latlng,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
-                var map = new google.maps.Map(document.getElementById("map_canvas"),
+                map = new google.maps.Map(document.getElementById("map_canvas"),
                         myOptions);
 
-                var infowindow = new google.maps.InfoWindow({
+                infoWindow = new google.maps.InfoWindow({
                     content: "aaa"//'<img href="' + p[2] + '" />'
                 });
 
-                //var infoWindow = null;
+                google.maps.event.addListener(map,"mouseup",function(){
+                    reloadPhotos();
+                });
+
+                reloadPhotos();
+            }
+
+            var markers = [];
+
+            function reloadPhotos() {
+                var lat = map.getCenter().lat();
+                var lon = map.getCenter().lng();
+                if( (lat - lastLatLng[0]) * (lat - lastLatLng[0]) +
+                    (lon - lastLatLng[1]) * (lon - lastLatLng[1]) >  0.0002){
+                  console.log("Reload photo data");
+                  lastLatLng = [lat,lon];
+                  $.getJSON("../api/photos/nearBy?latitude=" + lat + "&longitude=" + lon,function(data){
+                    points = data;
+                    drawMarkers();
+                  });
+                }
+
+            }
+
+            function drawMarkers() {
+                for(i in markers){
+                    var m = markers[i];
+                    m.setMap(null);
+                }
+                markers = [];
+
                 for(i in points){
                     var p = points[i];
                     var pos = new google.maps.LatLng(p.latitude, p.longitude);
@@ -56,20 +90,21 @@
                     var marker = new google.maps.Marker({
                         position: pos,
                         map: map,
-                        title:"User uploaded"
+                        title: p.place
                     });
                     marker.img = p.img;
+                    markers.push(marker);
 
                     google.maps.event.addListener(marker, 'click', function(event) {
 
-                        infowindow.close();
-                        infowindow.setContent('aaa<img src="' + this.img + '" />');
-                        infowindow.open(map,this);
+                        infoWindow.close();
+                        infoWindow.setContent(p.owner + 'さんの投稿(' + p.captured + '撮影)<br /><img src="' + this.img + '" />');
+                        infoWindow.open(map,this);
                     });
 
                 }
-
             }
+
             $(function(){
                 initialize();
             })

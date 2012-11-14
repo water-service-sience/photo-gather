@@ -3,23 +3,28 @@ package jp.utokyo.photogather.model
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.common._
-import net.liftweb.http.SessionVar
+import net.liftweb.http.{RequestVar, SessionVar}
 
 /**
  * The singleton that has methods for accessing the database
  */
 object User extends User with LongKeyedMetaMapper[User] with CRUDify[Long, User]{
 
-  private object _currentUser extends SessionVar[Option[User]](None)
+  private object _currentUserId extends SessionVar[Option[Long]](None)
+  private object _currentUser extends RequestVar[Option[User]](None)
 
-  def currentUser = _currentUser.is
+  def currentUser = _currentUser getOrElse {
+    val user = User.findByKey(_currentUserId.is.get)
+    _currentUser.set(Some(user.open_!))
+    user.open_!
+  }
 
-  def currentUserId = _currentUser.is.get.id.is
+  def currentUserId = _currentUserId.is.get
 
-  def loggedIn_? = currentUser.isDefined
+  def loggedIn_? = _currentUserId.is.isDefined
 
   def logUserIn(u : User) = {
-    _currentUser.set(Some(u))
+    _currentUserId.set(Some(u.id.is))
   }
 
 }

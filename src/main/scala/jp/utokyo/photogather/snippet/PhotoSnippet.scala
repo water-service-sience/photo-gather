@@ -5,9 +5,12 @@ import xml.{Text, NodeSeq}
 import net.liftweb.util.Helpers
 import Helpers._
 import SHtml._
-import jp.utokyo.photogather.util.StorageUtil
+import jp.utokyo.photogather.util.{EncryptUtil, StorageUtil}
 import jp.utokyo.photogather.model.{User, Photo}
 import java.util.Date
+import java.io.File
+import jp.utokyo.photogather.stateless.JsonHandler
+import java.text.SimpleDateFormat
 
 /**
  * 
@@ -22,29 +25,49 @@ class PhotoSnippet extends StatefulSnippet {
   }
 
 
+  val AvailableExtensions = Set("jpeg","jpg","gif","png")
+
   def upload(n : NodeSeq) : NodeSeq  = {
+
+
     bind("e",n,
       "file" -> fileUpload( f => {
-        StorageUtil.save(f.fileName,f.file)
+
+
+        val ext = f.fileName.substring(f.fileName.lastIndexOf(".") + 1)
+
+        if(!AvailableExtensions.contains(ext)){
+          throw new Exception("Can't upload not photo file.(Wrong extension)")
+        }
+
+        val digest = EncryptUtil.sha1Digest(f.file)
+        val filename = digest + "." + ext
+
+        StorageUtil.save(filename,f.file)
 
         val photo = Photo.create
-        photo.user(User.currentUser.get)
-        photo.resourceKey := f.fileName
+        photo.user(User.currentUser)
+        photo.resourceKey := filename
 
         photo.save()
 
       }),
       "submit" -> submit("アップロード",() => {
-        S.redirectTo("/photo/list")
+        S.redirectTo("/photo/upload_list")
       })
     )
 
   }
 
   def list( n : NodeSeq) : NodeSeq = {
-    User.currentUser.get.photos.all.flatMap( photo => {
+    val format = new SimpleDateFormat("yy/MM/dd HH:mm")
+    User.currentUser.photos.all.flatMap( photo => {
       bind("e",n,
-        "filename" -> photo.resourceKey.is,
+        "image" -> <img src={JsonHandler.toImageUrl(photo.resourceKey.is)} class="small-image"></img>,
+        "place" -> photo.place.is,
+        "id" -> photo.id,
+        "captured" -> format.format(photo.captured.is),
+        "uploaded" -> format.format(photo.uploaded.is),
         "link" -> ((n:NodeSeq) => {
         <a href={"photo_edit?photoId=" + photo.id.is}>{n}</a>
         })
@@ -56,18 +79,26 @@ class PhotoSnippet extends StatefulSnippet {
 
 
     val photo = Photo.find(S.param("photoId").open_!).open_!
-    if(photo.user.is != User.currentUser.get.id.is){
+    if(photo.user.is != User.currentUser.id.is){
       throw new Exception("Not own photo")
     }
 
+    def safeToDouble(v : String) = try{
+      v.toDouble
+    }catch{
+      case e => 0.0
+    }
+
     bind("e",n,
-      "longitude" -> hidden(l => photo.longitude(l.toDouble),
+      "image" -> <img src={"/images/uploaded/" + photo.resourceKey.is} class="large-image" />,
+      "place" -> text(photo.place.is, photo.place(_)),
+      "longitude" -> hidden(l => photo.longitude(safeToDouble(l)),
         if(photo.hasGpsInfo.is) photo.longitude.is.toString else "", "id" -> "longitude"),
-      "latitude" -> hidden(l => photo.latitude(l.toDouble),
+      "latitude" -> hidden(l => photo.latitude(safeToDouble(l)),
         if(photo.hasGpsInfo.is) photo.latitude.is.toString else "", "id" -> "latitude"),
-      "comment" -> textarea(photo.comment.is,photo.comment(_)),
+      "comment" -> textarea(photo.comment.is,photo.comment(_),"id" -> "photo-comment"),
       "submit" -> submit("変更",() => {
-        photo.hasGpsInfo(true)
+        photo.hasGpsInfo(photo.longitude.is != 0 && photo.latitude.is != 0)
         photo.save()
         val req = S.request.open_!
         S.redirectTo(req.uri  + "?" + req.request.queryString.open_!)

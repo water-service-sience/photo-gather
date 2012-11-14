@@ -20,12 +20,18 @@
               var latlng = null;
               if(lat != ""){
                 latlng = new  google.maps.LatLng(lat, $("#longitude").val());
+
+
+                $("#disp_lat").text(latlng.lat());
+                $("#disp_lon").text(latlng.lng());
+
               }else{
 
-                latlng = new google.maps.LatLng(35.71647786, 139.760593599);
+                  latlng = new google.maps.LatLng(35.71647786, 139.760593599);
+                  $("#disp_lat").text("未設定");
+                  $("#disp_lon").text("未設定");
               }
-              $("#disp_lat").text(latlng.lat());
-              $("#disp_lon").text(latlng.lng());
+
               var myOptions = {
                   zoom: 15,
                   center: latlng,
@@ -33,6 +39,12 @@
               };
               var map = new google.maps.Map(document.getElementById("map_canvas"),
                       myOptions);
+              var marker = new google.maps.Marker({
+                  position: latlng,
+                  map: map
+              });
+
+
               google.maps.event.addListener(map, 'click', function(event) {
 
                   var latlng = event.latLng;
@@ -40,6 +52,7 @@
                   $("#disp_lon").text(latlng.lng());
                   $("#latitude").val(latlng.lat());
                   $("#longitude").val(latlng.lng());
+                  marker.setPosition(latlng);
 
 
               });
@@ -54,11 +67,17 @@
 
 
       <form method="POST" class="lift:PhotoSnippet.edit">
+
+          <label>撮影場所</label>:<e:place></e:place>
+          <e:submit><input type="submit" value="更新" /></e:submit>
+          <div>
+            <e:image></e:image>
+          </div>
           <h3>コメント</h3>
           <e:comment></e:comment>
           <e:longitude></e:longitude>
           <e:latitude></e:latitude>
-          <h3>撮影場所</h3>
+          <h3>GPS情報</h3>
           <p>
               Latitude:<span id="disp_lat"></span> Longitude<span id="disp_lon"></span>
               <e:submit><input type="submit" value="更新" /></e:submit>

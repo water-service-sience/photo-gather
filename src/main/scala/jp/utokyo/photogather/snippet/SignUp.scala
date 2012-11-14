@@ -24,12 +24,12 @@ class SignUp extends StatefulSnippet with QuerySupport {
   }
   
   def currentUser(n : NodeSeq) : NodeSeq = {
-    if(User.currentUser.isEmpty){
+    if(!User.loggedIn_?){
       Text("未ログイン")
     }else{
       bind("e",n,
-        "id" -> User.currentUser.get.id.is.toString,
-        "name" -> User.currentUser.get.nickname
+        "id" -> User.currentUser.id.is.toString,
+        "name" -> User.currentUser.nickname
       )
     }
   }

@@ -9,6 +9,15 @@ import java.util.Date
  * DateTime: 12/11/13 1:31
  */
 object Photo  extends Photo with LongKeyedMetaMapper[Photo] with CRUDify[Long, Photo]{
+  override def dbIndexes =  List(Index(Photo.hasGpsInfo, Photo.latitude,Photo.longitude))
+
+  def findNearBy( latitude : Double, longitude : Double, area : Double) : List[Photo] = {
+    findAll(
+      By(Photo.hasGpsInfo,true),
+      By_<=(Photo.latitude,latitude + area),By_>=(Photo.latitude,latitude - area),
+      By_<=(Photo.longitude,longitude + area),By_>=(Photo.longitude,longitude - area))
+  }
+
 
 }
 
@@ -26,7 +35,7 @@ class Photo extends LongKeyedMapper[Photo] with IdPK{
   }
 
   object captured extends MappedDateTime(this){
-    override def defaultValue = new Date(0)
+    override def defaultValue = new Date()
   }
 
   object hasGpsInfo extends MappedBoolean(this){
@@ -39,6 +48,11 @@ class Photo extends LongKeyedMapper[Photo] with IdPK{
 
   object longitude extends MappedDouble(this){
     override def defaultValue = 0
+  }
+
+  object place extends MappedString(this,100){
+    override def defaultValue = ""
+
   }
 
   object comment extends MappedText(this){

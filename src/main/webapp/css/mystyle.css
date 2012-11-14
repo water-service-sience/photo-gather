@@ -55,3 +55,41 @@
   padding-right : 10px;
 }
 
+.large-image{
+  width : 320px;
+
+}
+.small-image{
+  width : 100px;
+  height: 100px;
+}
+
+#photo-comment {
+  width : 300px;
+  height: 100px;
+}
+
+.photo-element {
+  width:100%;
+}
+
+.photo-element > .img {
+  width:100px;
+  float:left;
+}
+.photo-element > .desc {
+  width:300px;
+  float:left;
+}
+
+.photo-element > .operation {
+  float:left;
+}
+
+.photo-element > .clear {
+  clear:both;
+}
+
+
+
+

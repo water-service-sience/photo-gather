@@ -19,6 +19,8 @@ object StorageUtil extends FileStorage{
   }
 
   def load(filename: String) = storage.load(filename)
+
+
 }
 
 

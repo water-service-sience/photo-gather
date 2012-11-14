@@ -12,6 +12,8 @@ import Loc._
 import mapper._
 
 import jp.utokyo.photogather.model._
+import jp.utokyo.photogather.stateless.{JsonHandler, PhotoHandler}
+import java.net.URLEncoder
 
 
 /**
@@ -38,7 +40,10 @@ class Boot {
 
 
     def ifLoggedIn = If( () => S.loggedIn_?, () => {
-      RedirectResponse("/sign_in")
+
+      val req = S.request.open_!.request
+      val url = req.uri + req.queryString.map(q => "?" + q).openOr("")
+      RedirectResponse("/sign_in?from=" + URLEncoder.encode(url,"utf-8"))
     })
 
     def ifNotLoggedIn = Test(r => !User.loggedIn_?)
@@ -56,7 +61,8 @@ class Boot {
       Loc(name  , path , name,   ifLoggedIn)
     }
 
-    //LiftRules.statelessDispatchTable.append(MemberJsonHandler)
+    LiftRules.statelessDispatchTable.append(JsonHandler)
+    LiftRules.statelessDispatchTable.append(PhotoHandler)
     
     // Build SiteMap
     def sitemap = SiteMap(
