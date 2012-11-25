@@ -65,6 +65,13 @@
             <version>0.9.26</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extracto</artifactId>
+            <version>2.6.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/metadata-extractor-2.6.3.jar</systemPath>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
