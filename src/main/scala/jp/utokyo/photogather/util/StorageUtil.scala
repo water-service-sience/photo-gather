@@ -2,6 +2,7 @@ package jp.utokyo.photogather.util
 
 import java.io.{FileInputStream, File, FileOutputStream}
 import org.slf4j.LoggerFactory
+import net.liftweb.util.Props
 
 /**
  * 
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory
 object StorageUtil extends FileStorage{
   val logger = LoggerFactory.getLogger(getClass)
 
-  var storage : FileStorage = new LocalFileStorage("./data/uploaded/photo")
+  lazy val storage : FileStorage = new LocalFileStorage(Props.get("photo.dir").getOrElse( "./data/uploaded/photo"))
 
   def save(filename: String, data: Array[Byte]) = {
     logger.debug("Save file : " + filename)

@@ -38,8 +38,9 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "1.11" % "test", // For specs.org tests
   "junit" % "junit" % "4.8" % "test->default", // For JUnit 4 testing
   "javax.servlet" % "servlet-api" % "2.5" % "provided->default",
+  "mysql" % "mysql-connector-java" % "5.1.22",
   "com.h2database" % "h2" % "1.3.168", // In-process database, useful for development systems
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile->default" // Logging
 )
 
-unmanagedBase <<= baseDirectory { base => base / "lib" }
+unmanagedBase <<= baseDirectory { base => base / "src" / "main" / "webapp" / "WEB-INF" / "lib" }
