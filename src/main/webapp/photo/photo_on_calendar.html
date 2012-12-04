@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>Home</title>
+  </head>
+  <body class="lift:content_id=main">
+
+    <div id="main" class="lift:surround?with=default;at=content">
+
+        <script type="text/javascript">
+
+            $(function(){
+            })
+
+            function selectImage(e){
+
+                var i = $(e);
+                console.log("##" + i.text());
+                var imageHolder = $("#image");
+                imageHolder.empty();
+                var image = $('<img src="' + i.data("image") + '" />');
+                imageHolder.append(image);
+
+            }
+
+        </script>
+
+
+        <div class="lift:PhotoCalendar.list">
+            <div id="0911" class="cal-day">
+                    <div class="label">9月11日</div>
+                    <ul class="body">
+                      <li data-image=”photo_url”>{p.place}</li>
+                    </ul>
+                  </div>
+        </div>
+
+        <div id="image" class="large-image" style="width:300px;"></div>
+
+
+    </div>
+  </body>
+</html>
+

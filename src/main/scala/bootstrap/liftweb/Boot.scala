@@ -73,6 +73,7 @@ class Boot {
         Menu(LoginLoc("PhotoList"   , "photo" :: "upload_list" :: Nil  )) ::
         Menu(LoginLoc("PhotoEdit"   , "photo" :: "photo_edit" :: Nil  )) ::
         Menu(LoginLoc("PhotoMap"   , "photo" :: "uploaded_map" :: Nil  )) ::
+        Menu(LoginLoc("PhotoOnCalendar"   , "photo" :: "photo_on_calendar" :: Nil  )) ::
 
       // more complex because this menu allows anything in the
       // /static path to be visible

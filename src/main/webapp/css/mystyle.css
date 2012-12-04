@@ -91,5 +91,39 @@
 }
 
 
+.cal-day{
+    position: relative;
+  width:90px;
+  height:180px;
+
+  float:left;
+    border: solid 1px #000000;
+
+}
+
+.cal-day .label{
+    text-align: center;
+    background-color: #eaffbb;
+    border: solid 2px #64ff3d;
+    padding: 2px;
+    border-radius: 5px;
+
+}
+
+.cal-day .body {
+    position: relative;
+    list-style-type : none;
+    padding:2px;
+    border-radius: 5px;
+
+    width:90px;
+    height:100%;
+}
+
+.cal-day:hover{
+    background-color: #ffd5f2;
+}
+
+
 
 

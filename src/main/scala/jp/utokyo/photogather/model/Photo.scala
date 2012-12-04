@@ -18,6 +18,10 @@ object Photo  extends Photo with LongKeyedMetaMapper[Photo] with CRUDify[Long, P
       By_<=(Photo.longitude,longitude + area),By_>=(Photo.longitude,longitude - area))
   }
 
+  def findBetween(begin : Date,end : Date) : List[Photo] = {
+    findAll(By_>=(Photo.captured,begin),By_<=(Photo.captured,end))
+  }
+
 
 }
 
