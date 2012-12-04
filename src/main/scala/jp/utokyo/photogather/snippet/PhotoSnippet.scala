@@ -5,7 +5,7 @@ import xml.{Text, NodeSeq}
 import net.liftweb.util.Helpers
 import Helpers._
 import SHtml._
-import jp.utokyo.photogather.util.{EncryptUtil, StorageUtil}
+import jp.utokyo.photogather.util.{PhotoUtil, EncryptUtil, StorageUtil}
 import jp.utokyo.photogather.model.{User, Photo}
 import java.util.Date
 import java.io.File
@@ -48,6 +48,15 @@ class PhotoSnippet extends StatefulSnippet {
         val photo = Photo.create
         photo.user(User.currentUser)
         photo.resourceKey := filename
+
+        PhotoUtil.extractGpsInfo(f.file) match{
+          case Some((lat,lon)) => {
+            photo.latitude := lat
+            photo.longitude := lon
+            photo.hasGpsInfo := true
+          }
+          case None =>
+        }
 
         photo.save()
 
