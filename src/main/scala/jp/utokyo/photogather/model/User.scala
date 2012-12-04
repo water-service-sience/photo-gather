@@ -4,6 +4,7 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http.{RequestVar, SessionVar}
+import java.util.Date
 
 /**
  * The singleton that has methods for accessing the database
@@ -27,6 +28,32 @@ object User extends User with LongKeyedMetaMapper[User] with CRUDify[Long, User]
     _currentUserId.set(Some(u.id.is))
   }
 
+  def logout() = {
+    _currentUserId.set(None)
+    _currentUser.set(None)
+  }
+
+  def findByUsername(username : String) = {
+    User.find(By(User.username,username))
+  }
+  def findByAccessKey(accessKey : String) = {
+    User.find(By(User.accessKey,accessKey))
+  }
+
+  def createUser(username : String, password : String) = {
+    val user = User.create
+    user.password := password
+    user.username(username)
+    user.nickname(username)
+    user.registered(new Date)
+    user.lastActive(new Date)
+    user.save()
+    user.accessKey(user.id.is + "Z%x".format((username + nickname).hashCode.abs))
+    user.save()
+    user
+  }
+
+
 }
 
 /**
@@ -46,6 +73,10 @@ class User extends LongKeyedMapper[User] with IdPK with OneToMany[Long,User] {
 
   object registered extends MappedDateTime(this)
   object lastActive extends MappedDateTime(this)
+
+  object accessKey extends MappedString(this,100){
+    override def dbIndexed_? = true
+  }
 
 
   object photos extends MappedOneToMany(Photo,Photo.user,OrderBy(Photo.uploaded,Ascending))

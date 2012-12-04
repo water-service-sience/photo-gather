@@ -11,6 +11,7 @@ import java.util.Date
 import java.io.File
 import jp.utokyo.photogather.stateless.JsonHandler
 import java.text.SimpleDateFormat
+import jp.utokyo.photogather.function.PhotoFunction
 
 /**
  * 
@@ -25,7 +26,6 @@ class PhotoSnippet extends StatefulSnippet {
   }
 
 
-  val AvailableExtensions = Set("jpeg","jpg","gif","png")
 
   def upload(n : NodeSeq) : NodeSeq  = {
 
@@ -33,32 +33,7 @@ class PhotoSnippet extends StatefulSnippet {
     bind("e",n,
       "file" -> fileUpload( f => {
 
-
-        val ext = f.fileName.substring(f.fileName.lastIndexOf(".") + 1)
-
-        if(!AvailableExtensions.contains(ext)){
-          throw new Exception("Can't upload not photo file.(Wrong extension)")
-        }
-
-        val digest = EncryptUtil.sha1Digest(f.file)
-        val filename = digest + "." + ext
-
-        StorageUtil.save(filename,f.file)
-
-        val photo = Photo.create
-        photo.user(User.currentUser)
-        photo.resourceKey := filename
-
-        PhotoUtil.extractGpsInfo(f.file) match{
-          case Some((lat,lon)) => {
-            photo.latitude := lat
-            photo.longitude := lon
-            photo.hasGpsInfo := true
-          }
-          case None =>
-        }
-
-        photo.save()
+        val photo = PhotoFunction.saveToStorage(User.currentUser, f.fileName, f.file)
 
       }),
       "submit" -> submit("アップロード",() => {

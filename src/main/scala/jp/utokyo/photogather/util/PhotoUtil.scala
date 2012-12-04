@@ -4,6 +4,7 @@ import com.drew.imaging.ImageMetadataReader
 import java.io.{BufferedInputStream, ByteArrayInputStream}
 import com.drew.metadata.exif.GpsDirectory
 import com.drew.lang.Rational
+import jp.utokyo.photogather.model.{User, Photo}
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,6 +14,7 @@ import com.drew.lang.Rational
  * To change this template use File | Settings | File Templates.
  */
 object PhotoUtil {
+
 
 
   def extractGpsInfo(data : Array[Byte]) : Option[(Double,Double)] = {

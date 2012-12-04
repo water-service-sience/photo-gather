@@ -38,12 +38,11 @@ class SignUp extends StatefulSnippet with QuerySupport {
 
     val pageFrom = S.param("from").openOr("/index.html")
 
+
     bind("e",n,
     "submit" -> SHtml.submit ("ログイン", () => {
       User.find(By(User.username,paramAsString("username"))).map( u => {
 
-        println(u.password)
-        println(paramAsString("password"))
 
         if(u.password == (paramAsString("password") )){
           User.logUserIn(u)
@@ -68,17 +67,12 @@ class SignUp extends StatefulSnippet with QuerySupport {
       if(p1 != p2){
         throw new Exception("Input same password!")
       }
-      val user = User.create
-      user.password := p1
-      user.username(paramAsString("username"))
-      user.nickname(paramAsString("username"))
-      user.registered(new Date)
-      user.lastActive(new Date)
-      user.save()
+      val user = User.createUser(paramAsString("username"),p1)
 
       User.logUserIn(user)
       S.redirectTo("/index.html")
     }))
 
   }
+
 }

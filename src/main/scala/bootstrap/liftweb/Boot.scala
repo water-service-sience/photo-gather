@@ -12,7 +12,7 @@ import Loc._
 import mapper._
 
 import jp.utokyo.photogather.model._
-import jp.utokyo.photogather.stateless.{JsonHandler, PhotoHandler}
+import jp.utokyo.photogather.stateless.{LoginHandler, APIHandler, JsonHandler, PhotoHandler}
 import java.net.URLEncoder
 
 
@@ -42,7 +42,11 @@ class Boot {
     def ifLoggedIn = If( () => S.loggedIn_?, () => {
 
       val req = S.request.open_!.request
-      val url = req.uri + req.queryString.map(q => "?" + q).openOr("")
+      val _url = req.uri + req.queryString.map(q => "?" + q).openOr("")
+      val url = if(req.contextPath != null && req.contextPath.length > 0){
+        _url.substring(_url.length + 1)
+      }else _url
+
       RedirectResponse("/sign_in?from=" + URLEncoder.encode(url,"utf-8"))
     })
 
@@ -63,7 +67,9 @@ class Boot {
 
     LiftRules.statelessDispatchTable.append(JsonHandler)
     LiftRules.statelessDispatchTable.append(PhotoHandler)
-    
+    LiftRules.statelessDispatchTable.append(APIHandler)
+    LiftRules.dispatch.append(LoginHandler)
+
     // Build SiteMap
     def sitemap = SiteMap(
       Menu(LoginLoc("Home"   , "index" :: Nil  )) :: // the simple way to declare a menu
