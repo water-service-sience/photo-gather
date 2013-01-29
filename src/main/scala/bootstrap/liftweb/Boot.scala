@@ -22,6 +22,7 @@ import java.net.URLEncoder
  */
 class Boot {
   def boot {
+
     if (!DB.jndiJdbcConnAvailable_?) {
       val vendor = 
 	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
@@ -80,6 +81,7 @@ class Boot {
         Menu(LoginLoc("PhotoEdit"   , "photo" :: "photo_edit" :: Nil  )) ::
         Menu(LoginLoc("PhotoMap"   , "photo" :: "uploaded_map" :: Nil  )) ::
         Menu(LoginLoc("PhotoOnCalendar"   , "photo" :: "photo_on_calendar" :: Nil  )) ::
+        Menu(LoginLoc("PhotoInDay"   , "photo" :: "photo_day" :: Nil  )) ::
 
       // more complex because this menu allows anything in the
       // /static path to be visible

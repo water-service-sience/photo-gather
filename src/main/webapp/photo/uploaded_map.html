@@ -34,11 +34,25 @@
             var infoWindow = null;
             var map = null;
             var lastLatLng = [0,0];
+            var _date = "";
 
             function initialize() {
 
+                var QS = {};
+                if (location.search.length > 1) {
+                  var m_Array = location.search.substr(1).split("&");
+                  for (idx in m_Array) {
+                    var sp = m_Array[idx].split("=");
+                      QS[sp[0]] = sp[1];
+                  }
+                }
 
-                var latlng = new google.maps.LatLng(35.71647786, 139.760593599);
+                var _lat = QS["latitude"] || 35.71647786;
+                var _lng = QS["longitude"] || 139.760593599;
+                _date = QS["date"] || "";
+
+
+                var latlng = new google.maps.LatLng(_lat, _lng);
 
                 var myOptions = {
                     zoom: 15,
@@ -68,7 +82,7 @@
                     (lon - lastLatLng[1]) * (lon - lastLatLng[1]) >  0.0002){
                   console.log("Reload photo data");
                   lastLatLng = [lat,lon];
-                  $.getJSON("../api/photos/nearBy?latitude=" + lat + "&longitude=" + lon,function(data){
+                  $.getJSON("../api/photos/nearBy?latitude=" + lat + "&longitude=" + lon + "&day=" + _date,function(data){
                     points = data;
                     drawMarkers();
                   });

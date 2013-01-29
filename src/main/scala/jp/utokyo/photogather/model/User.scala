@@ -5,6 +5,7 @@ import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http.{RequestVar, SessionVar}
 import java.util.Date
+import jp.utokyo.photogather.util.EncryptUtil
 
 /**
  * The singleton that has methods for accessing the database
@@ -13,6 +14,8 @@ object User extends User with LongKeyedMetaMapper[User] with CRUDify[Long, User]
 
   private object _currentUserId extends SessionVar[Option[Long]](None)
   private object _currentUser extends RequestVar[Option[User]](None)
+
+  val logger = Logger(classOf[User])
 
   def currentUser = _currentUser getOrElse {
     val user = User.findByKey(_currentUserId.is.get)
@@ -40,6 +43,23 @@ object User extends User with LongKeyedMetaMapper[User] with CRUDify[Long, User]
     User.find(By(User.accessKey,accessKey))
   }
 
+  def createUser(nickname : String) : User = {
+
+    logger.info("Create user with nickname %s".format(nickname))
+    val accessKey = EncryptUtil.randomString(26);
+    val user = User.create
+
+    user.password := accessKey
+    user.username(accessKey)
+    user.nickname(nickname)
+    user.registered(new Date)
+    user.lastActive(new Date)
+    user.accessKey := accessKey
+    user.save()
+    user
+
+  }
+
   def createUser(username : String, password : String) = {
     val user = User.create
     user.password := password
@@ -47,8 +67,7 @@ object User extends User with LongKeyedMetaMapper[User] with CRUDify[Long, User]
     user.nickname(username)
     user.registered(new Date)
     user.lastActive(new Date)
-    user.save()
-    user.accessKey(user.id.is + "Z%x".format((username + nickname).hashCode.abs))
+    user.accessKey := EncryptUtil.randomString(26);
     user.save()
     user
   }

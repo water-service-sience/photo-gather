@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
-    <title>Home</title>
+    <title>Photos in day</title>
   </head>
   <body class="lift:content_id=main">
 
@@ -13,21 +13,11 @@
             $(function(){
             })
 
-            function selectImage(e){
-
-                var i = $(e);
-                console.log("##" + i.text());
-                var imageHolder = $("#image");
-                imageHolder.empty();
-                var image = $('<img src="' + i.data("image") + '" />');
-                imageHolder.append(image);
-
-            }
 
         </script>
 
 
-        <div class="lift:PhotoCalendar.monthList">
+        <div class="lift:PhotoCalendar.dayList">
             <div id="0911" class="cal-day">
                     <div class="label">9月11日</div>
                     <ul class="body">
@@ -36,7 +26,6 @@
                   </div>
         </div>
 
-        <div id="image" class="large-image" style="width:300px;"></div>
 
 
     </div>
