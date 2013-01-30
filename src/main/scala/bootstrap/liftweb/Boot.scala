@@ -44,7 +44,7 @@ class Boot {
       val req = S.request.open_!.request
       val _url = req.uri + req.queryString.map(q => "?" + q).openOr("")
       val url = if(req.contextPath != null && req.contextPath.length > 0){
-        _url.substring(_url.length + 1)
+        _url.substring(req.contextPath.length + 1)
       }else _url
 
       RedirectResponse("/sign_in?from=" + URLEncoder.encode(url,"utf-8"))
