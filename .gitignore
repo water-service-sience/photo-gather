@@ -24,6 +24,5 @@ profileOfH2Tests.html
 *.lock.db
 
 data*
-log*
 
 takeshita.props
