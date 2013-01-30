@@ -103,14 +103,25 @@ object APIHandler extends RestHelper  {
           case _ => // nothing
         }
       }
+      def extractD( key : String, func : Double => Any){
+        (body \ key).toOpt match{
+          case Some(JString(v)) => func(v.toDouble)
+          case Some(JInt(v)) => func(v.toDouble)
+          case Some(JDouble(v)) => func(v)
+          case _ => // nothing
+        }
+      }
       extract("place", v => photo.place := v)
       extract("comment", v => photo.comment := v)
-      extract("lon",lon => {
-        extract("lat",lat => {
-          photo.longitude := lon
-          photo.latitude := lat;
+      if(!photo.hasGpsInfo.is){
+        extractD("lon",lon => {
+          extractD("lat",lat => {
+            photo.longitude := lon
+            photo.latitude := lat
+            photo.hasGpsInfo := true;
+          })
         })
-      })
+      }
 
       photo.save()
 
