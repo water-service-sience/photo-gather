@@ -29,6 +29,9 @@ object APIHandler extends RestHelper  {
   }
 
   serve {
+    case Req("api" :: "status" :: Nil,_,GetRequest) => {
+      PlainTextResponse("ok")
+    }
     case  r @ Req("api" :: "user" :: "create":: Nil, _, PostRequest) =>{//api" :: "user" :: "create" :: Nil JsonPost json => {
       val body = r.json.open_!
 
