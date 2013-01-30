@@ -19,7 +19,7 @@ object PhotoUtil {
 
   def extractGpsInfo(data : Array[Byte]) : Option[(Double,Double)] = {
     def rationalToDouble(rArray: Array[Rational]) = {
-      rArray(0).doubleValue + rArray(1).doubleValue / 60.0 + rArray(2).doubleValue / (60 * 60 * 1000)
+      rArray(0).doubleValue + rArray(1).doubleValue / 60.0 + rArray(2).doubleValue / (60 * 60)
     }
 
     val stream = new BufferedInputStream( new ByteArrayInputStream(data))

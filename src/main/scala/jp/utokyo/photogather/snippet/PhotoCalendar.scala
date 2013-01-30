@@ -19,6 +19,8 @@ import java.util.Calendar
 class PhotoCalendar extends StatefulSnippet {
   def dispatch: DispatchIt = {
     case "list" => list _
+    case "monthList" => monthList _
+    case "dayList" => dayList _
   }
 
   def list(n : NodeSeq) : NodeSeq = {
@@ -63,6 +65,96 @@ class PhotoCalendar extends StatefulSnippet {
       </div>
     })
 
+  }
+
+  val days = List(0,31,28,31,30,31,30,31,31,30,31,30,31)
+
+  def monthList(node : NodeSeq) : NodeSeq = {
+    val now = Calendar.getInstance()
+    val year = S.param("year").map(_.toInt).openOr(now.get(Calendar.YEAR))
+    val month = S.param("month").map(_.toInt).openOr(now.get(Calendar.MONTH) + 1)
+    val photos = photoListOfMonth(year,month)
+    val dateList = (1 to days(month)).map( d => "%02d/%02d".format(month,d)).toList
+
+    val firstDay = Calendar.getInstance()
+    firstDay.set(year,month - 1,1)
+    val padding = (0 until (firstDay.get(Calendar.DAY_OF_WEEK) - 1 )).map("empty" + _).toList
+
+    var weekOfMonth = 0
+    (padding ::: dateList).sliding(7,7).map( week => {
+      weekOfMonth += 1
+      val list = week.map(date => {
+
+        if (date.startsWith("empty")){
+
+
+          <div id={date} class="cal-day">
+            <div class="label">--</div>
+            <div class="body">
+            </div>
+          </div>
+
+        }else{
+
+
+
+        <div id={date} class="cal-day">
+          <div class="label">{date}</div>
+          <div class="body">
+          {
+            photos.get(date) match{
+              case Some(uploaded) => {
+                val p = uploaded(0)
+                val img =
+                    <a href={"uploaded_map?date=" + year + "/" + date}>
+                      <img src={JsonHandler.toImageUrl(p.resourceKey.is)} style="width:50px;height:50px;" />
+                    </a>
+                if(uploaded.size >= 2){
+                  Seq(img, <div>{"他" + (uploaded.size - 1) + "件"}</div>)
+                }else{
+                  img
+                }
+              }
+              case None => <span>投稿なし</span>
+            }
+          }
+          </div>
+        </div>
+        }
+      })
+
+      <div id={"week" + weekOfMonth}>{list}</div>
+    }).toSeq
+
+
+  }
+
+
+  def dayList(node : NodeSeq) : NodeSeq = {
+    val (year,month,day) = {
+      val s = S.param("date").map(_.split("/")).open_!
+      (s(0).toInt,s(1).toInt,s(2).toInt)
+    }
+    val photos = Photo.findInDay(year,month,day)
+
+    photos.map(p => {
+
+      <span>
+        <div>{p.place.is}</div>
+        <img data-coord={p.latitude.is + ":" + p.longitude.is} class="thumb" src={JsonHandler.toImageUrl(p.resourceKey.is)} style="width:90px;height:90px;" />
+      </span>
+    })
+
+  }
+
+
+
+  def photoListOfMonth( year : Int , month : Int) = {
+    val photos = Photo.findInMonth(year,month)
+    val f = new SimpleDateFormat("MM/dd")
+    val grouped = photos.groupBy(photo => f.format(photo.uploaded.is))
+
+    grouped
   }
 
 

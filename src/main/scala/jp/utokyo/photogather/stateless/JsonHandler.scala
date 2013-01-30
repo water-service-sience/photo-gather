@@ -33,7 +33,18 @@ object JsonHandler extends RestHelper  {
       val zoom = S.param("zoom").openOr("3").toDouble
       val areaSize = zoom * 0.01
 
-      val photos = Photo.findNearBy(lat,lon,areaSize)
+      val photos = {
+        val date = S.param("day").openOr( "")
+        if (date.length > 0){
+          val (year,month,day) = {
+            val s = date.split("/")
+            (s(0).toInt,s(1).toInt,s(2).toInt)
+          }
+          Photo.findInDay(year,month,day)
+        }else{
+          Photo.findNearBy(lat,lon,areaSize)
+        }
+      }
 
       import net.liftweb.json._
       import net.liftweb.json.JsonDSL._

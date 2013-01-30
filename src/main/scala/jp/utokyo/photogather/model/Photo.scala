@@ -1,7 +1,7 @@
 package jp.utokyo.photogather.model
 
 import net.liftweb.mapper._
-import java.util.Date
+import java.util.{Calendar, Date}
 
 /**
  * 
@@ -11,15 +11,43 @@ import java.util.Date
 object Photo  extends Photo with LongKeyedMetaMapper[Photo] with CRUDify[Long, Photo]{
   override def dbIndexes =  List(Index(Photo.hasGpsInfo, Photo.latitude,Photo.longitude))
 
-  def findNearBy( latitude : Double, longitude : Double, area : Double) : List[Photo] = {
+  def findSelfUploaded(userId : Long) = {
+    findAll(By(Photo.user,userId),OrderBy(Photo.captured,Descending))
+  }
+
+  def findNearBy( latitude : Double, longitude : Double, area : Double, after : Date = before24hours()) : List[Photo] = {
     findAll(
       By(Photo.hasGpsInfo,true),
       By_<=(Photo.latitude,latitude + area),By_>=(Photo.latitude,latitude - area),
       By_<=(Photo.longitude,longitude + area),By_>=(Photo.longitude,longitude - area))
   }
 
+  def before24hours() = {
+    new Date(new Date().getTime - 24 * 60 * 60 * 1000)
+  }
+
+
   def findBetween(begin : Date,end : Date) : List[Photo] = {
     findAll(By_>=(Photo.captured,begin),By_<=(Photo.captured,end))
+  }
+
+  def findInMonth(year : Int, month : Int) = {
+
+    val cal = Calendar.getInstance()
+    cal.set(year,month - 1,1)
+    val end = Calendar.getInstance()
+    end.set(year,month,1)
+    end.add(Calendar.DAY_OF_YEAR,-1)
+    findBetween(cal.getTime,end.getTime)
+
+  }
+
+  def findInDay(year : Int , month : Int,day : Int) = {
+    val cal = Calendar.getInstance()
+    cal.set(year,month - 1,day,0,0)
+    val end = Calendar.getInstance()
+    end.set(year,month -1 , day + 1, 0,0)
+    findBetween(cal.getTime,end.getTime)
   }
 
 

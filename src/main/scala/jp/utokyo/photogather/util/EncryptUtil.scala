@@ -1,6 +1,7 @@
 package jp.utokyo.photogather.util
 
 import java.security.MessageDigest
+import util.Random
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,4 +18,20 @@ object EncryptUtil {
     md.digest(data).map( b => "%x".format(b)).mkString
   }
 
+
+  val random = new Random
+  val AlphabetAndNumbers = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toArray
+
+  def randomString(length : Int) : String = {
+    randomString(length,AlphabetAndNumbers)
+  }
+
+  def randomString(length : Int,characterList : Array[Char]) : String = {
+    val b = new StringBuilder(length)
+    val max = characterList.length
+    for (i <- 0 until length){
+      b.append(characterList(random.nextInt(max)))
+    }
+    b.toString()
+  }
 }
