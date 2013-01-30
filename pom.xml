@@ -155,7 +155,7 @@
                 <version>2.0</version>
                 <configuration>
                     <server>tomcat.manager</server>
-                    <path>photo-gather</path>
+                    <path>/photo-gather</path>
                 </configuration>
             </plugin>
             <plugin>
