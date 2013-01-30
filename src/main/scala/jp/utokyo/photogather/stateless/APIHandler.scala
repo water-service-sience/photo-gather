@@ -159,7 +159,7 @@ object APIHandler extends RestHelper  {
   def photoListToJSON(photos : List[Photo]) : JValue = {
     photos.map(photo => {
       ("id" -> photo.id.is) ~
-      ("resouceKey" ->  photo.resourceKey.is) ~
+      ("resourceKey" ->  photo.resourceKey.is) ~
         ("ownerId" -> photo.user.is) ~
         ("place" -> photo.place.is) ~
         ("comment" -> photo.comment.is) ~
