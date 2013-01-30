@@ -155,7 +155,6 @@
                 <version>2.0</version>
                 <configuration>
                     <server>tomcat.manager</server>
-                    <url>http://localhost:8009/manager</url>
                     <path>photo-gather</path>
                 </configuration>
             </plugin>

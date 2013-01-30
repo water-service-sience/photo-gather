@@ -21,8 +21,8 @@ class PhotoUtilTest extends SpecificationWithJUnit {
 
       gps must beSome[(Double,Double)]
 
-      gps.get._1 must beCloseTo(35.683349,0.001)
-      gps.get._2 must beCloseTo(139.7666717,0.001)
+      gps.get._1 must beCloseTo(35.6997777777,0.001)
+      gps.get._2 must beCloseTo(139.7717,0.001)
 
     }
   }
