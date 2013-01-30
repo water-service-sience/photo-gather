@@ -105,6 +105,13 @@ object APIHandler extends RestHelper  {
       }
       extract("place", v => photo.place := v)
       extract("comment", v => photo.comment := v)
+      extract("lon",lon => {
+        extract("lat",lat => {
+          photo.longitude := lon
+          photo.latitude := lat;
+        })
+      })
+
       photo.save()
 
       ("result" -> "ok") ~
