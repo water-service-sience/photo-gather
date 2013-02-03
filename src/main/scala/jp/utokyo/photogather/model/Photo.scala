@@ -22,6 +22,13 @@ object Photo  extends Photo with LongKeyedMetaMapper[Photo] with CRUDify[Long, P
       By_<=(Photo.longitude,longitude + area),By_>=(Photo.longitude,longitude - area))
   }
 
+  def findBadPhotos() = {
+    findAll(
+      By_<=(Photo.goodness,-50),
+      By_>=(Photo.captured,before24hours())
+    )
+  }
+
   def before24hours() = {
     new Date(new Date().getTime - 24 * 60 * 60 * 1000)
   }
@@ -82,9 +89,8 @@ class Photo extends LongKeyedMapper[Photo] with IdPK{
     override def defaultValue = 0
   }
 
-  object place extends MappedString(this,100){
-    override def defaultValue = ""
-
+  object goodness extends MappedInt(this){
+    override def defaultValue = 0
   }
 
   object comment extends MappedText(this){

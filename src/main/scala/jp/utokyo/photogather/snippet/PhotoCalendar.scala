@@ -56,7 +56,7 @@ class PhotoCalendar extends StatefulSnippet {
         {
         todays.map(p => {
 
-          <li data-image={JsonHandler.toImageUrl(p.resourceKey.is)} onClick="selectImage(this);">{p.place}
+          <li data-image={JsonHandler.toImageUrl(p.resourceKey.is)} onClick="selectImage(this);">{p.comment}
           <img src={JsonHandler.toImageUrl(p.resourceKey.is)} style="width:50px;height:50px;" />
           </li>
         })
@@ -140,7 +140,7 @@ class PhotoCalendar extends StatefulSnippet {
     photos.map(p => {
 
       <span>
-        <div>{p.place.is}</div>
+        <div>{p.comment.is}</div>
         <img data-coord={p.latitude.is + ":" + p.longitude.is} class="thumb" src={JsonHandler.toImageUrl(p.resourceKey.is)} style="width:90px;height:90px;" />
       </span>
     })

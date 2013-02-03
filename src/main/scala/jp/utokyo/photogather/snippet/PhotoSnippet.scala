@@ -48,7 +48,7 @@ class PhotoSnippet extends StatefulSnippet {
     User.currentUser.photos.all.flatMap( photo => {
       bind("e",n,
         "image" -> <img src={JsonHandler.toImageUrl(photo.resourceKey.is)} class="small-image"></img>,
-        "place" -> photo.place.is,
+        "place" -> photo.comment.is,
         "id" -> photo.id,
         "captured" -> format.format(photo.captured.is),
         "uploaded" -> format.format(photo.uploaded.is),
@@ -75,7 +75,6 @@ class PhotoSnippet extends StatefulSnippet {
 
     bind("e",n,
       "image" -> <img src={"/images/uploaded/" + photo.resourceKey.is} class="large-image" />,
-      "place" -> text(photo.place.is, photo.place(_)),
       "longitude" -> hidden(l => photo.longitude(safeToDouble(l)),
         if(photo.hasGpsInfo.is) photo.longitude.is.toString else "", "id" -> "longitude"),
       "latitude" -> hidden(l => photo.latitude(safeToDouble(l)),

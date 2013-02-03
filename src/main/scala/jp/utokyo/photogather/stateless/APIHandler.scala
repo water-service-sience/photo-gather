@@ -8,7 +8,8 @@ import net.liftweb.common.{Logger, Full}
 import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 import jp.utokyo.photogather.function.PhotoFunction
-import java.util.Date
+import java.util.{Calendar, Date}
+import java.text.SimpleDateFormat
 
 /**
  * For client
@@ -76,7 +77,8 @@ object APIHandler extends RestHelper  {
           val photo = PhotoFunction.saveToStorage(user, file.fileName,file.file)
 
           ("result" -> "ok") ~
-          ("photoId" -> photo.id.is)
+          ("photoId" -> photo.id.is) ~
+          ("hasGpsInfo" -> photo.hasGpsInfo.is)
         }
         case _ => {
 
@@ -111,7 +113,16 @@ object APIHandler extends RestHelper  {
           case _ => // nothing
         }
       }
-      extract("place", v => photo.place := v)
+      def extractI(key : String,func : Int => Any){
+        (body \ key).toOpt match{
+          case Some(JString(v)) => func(v.toInt)
+          case Some(JInt(v)) => func(v.toInt)
+          case Some(JDouble(v)) => func(v.toInt)
+          case _ => //nothing
+        }
+      }
+
+      extractI("goodness", v => photo.goodness := v)
       extract("comment", v => photo.comment := v)
       if(!photo.hasGpsInfo.is){
         extractD("lon",lon => {
@@ -147,6 +158,37 @@ object APIHandler extends RestHelper  {
 
       photoListToJSON(photos)
 
+    }
+    case Req("api" :: "alert" :: Nil, _ , GetRequest) => {
+      val photos = Photo.findBadPhotos()
+      photoListToJSON(photos)
+    }
+
+    case Req("api" :: "photo" :: "calendar" :: Nil, _ , GetRequest) => {
+
+      val year = S.param("year").map(_.toInt).openOr{
+        Calendar.getInstance().get(Calendar.YEAR)
+      }
+      val month = S.param("month").map(_.toInt).openOr{
+        Calendar.getInstance().get(Calendar.MONTH) + 1
+      }
+
+      val photos = Photo.findInMonth(year,month)
+      logger.debug("Find " + photos.length + " photos at " + year + "/" + month)
+      val f = new SimpleDateFormat("MM/dd")
+      val grouped = photos.groupBy(photo => f.format(photo.uploaded.is))
+
+      val c = Calendar.getInstance();
+      c.set(year,month - 1,1)
+
+      val base = ("year" -> year) ~
+      ("month" -> month) ~
+      ("firstDayOfWeek" -> c.get(Calendar.DAY_OF_WEEK))
+
+      grouped.foldLeft(base)( (s,e) => {
+        s ~
+        (e._1 -> photoListToJSON(e._2))
+      })
 
 
     }
@@ -161,13 +203,15 @@ object APIHandler extends RestHelper  {
       ("id" -> photo.id.is) ~
       ("resourceKey" ->  photo.resourceKey.is) ~
         ("ownerId" -> photo.user.is) ~
-        ("place" -> photo.place.is) ~
+        ("ownerName" -> photo.user.obj.open_!.nickname.is) ~
         ("comment" -> photo.comment.is) ~
-        ("captured" -> photo.captured.is)  ~
+        ("captured" -> photo.captured.is.getTime)  ~
         ("hasGps" -> photo.hasGpsInfo.is)  ~
         ("latitude" -> photo.latitude.is) ~
-        ("longitude" -> photo.longitude.is)
+        ("longitude" -> photo.longitude.is) ~
+        ("goodness" -> photo.goodness.is)
     })
   }
+
 
 }

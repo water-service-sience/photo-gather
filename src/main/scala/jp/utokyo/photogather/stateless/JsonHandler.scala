@@ -55,10 +55,10 @@ object JsonHandler extends RestHelper  {
         ("latitude" -> p.latitude.is) ~
         ("longitude" -> p.longitude.is) ~
         ("img" -> toImageUrl(p.resourceKey.is)) ~
-        ("place" -> p.place.is) ~
         ("ownerId" -> p.user.is) ~
         ("owner" -> p.user.obj.open_!.nickname.is) ~
-        ("captured" -> format.format(p.captured.is))
+        ("captured" -> format.format(p.captured.is)) ~
+        ("goodness" -> p.goodness.is)
 
       }))
 
