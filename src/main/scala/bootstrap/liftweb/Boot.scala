@@ -37,7 +37,7 @@ class Boot {
     
     
     
-    val models = List(User,Photo)
+    val models = List(User,Photo,InquiryData,Place,Category)
 
 
     def ifLoggedIn = If( () => S.loggedIn_?, () => {
@@ -75,14 +75,15 @@ class Boot {
     def sitemap = SiteMap(
       Menu(LoginLoc("Home"   , "index" :: Nil  )) :: // the simple way to declare a menu
       Menu(Loc("SignIn" , "sign_in" :: Nil, "Sign in page" , Hidden)) ::
-      Menu(Loc("SignUp" , "sign_up" :: Nil, "Sign up page" , Hidden)) ::
+        Menu(Loc("SignUp" , "sign_up" :: Nil, "Sign up page" , Hidden)) ::
+      Menu(LoginLoc("Inquiry","inquiry" :: "search" :: Nil)) ::
+        Menu(LoginLoc("InquiryDetail","inquiry" :: "detail" :: Nil)) ::
         Menu(LoginLoc("UploadPhoto"   , "photo" :: "upload" :: Nil  )) ::
         Menu(LoginLoc("PhotoList"   , "photo" :: "upload_list" :: Nil  )) ::
         Menu(LoginLoc("PhotoEdit"   , "photo" :: "photo_edit" :: Nil  )) ::
         Menu(LoginLoc("PhotoMap"   , "photo" :: "uploaded_map" :: Nil  )) ::
         Menu(LoginLoc("PhotoOnCalendar"   , "photo" :: "photo_on_calendar" :: Nil  )) ::
         Menu(LoginLoc("PhotoInDay"   , "photo" :: "photo_day" :: Nil  )) ::
-
       // more complex because this menu allows anything in the
       // /static path to be visible
       Menu(Loc("Static", Link(List("static"), true, "/static/index"), 

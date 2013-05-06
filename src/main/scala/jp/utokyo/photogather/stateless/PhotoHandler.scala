@@ -17,7 +17,8 @@ object PhotoHandler extends RestHelper  {
 
       val data = StorageUtil.load(key + "." + extension)
 
-      new InMemoryResponse(data,Nil,Nil,200)
+
+      new InMemoryResponse(data,List("Content-Type" -> ("image/" + extension)),Nil,200)
 
     }
   }
