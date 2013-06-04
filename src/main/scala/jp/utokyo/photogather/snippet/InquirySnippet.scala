@@ -35,7 +35,7 @@ class InquirySnippet extends StatefulSnippet{
 
       val inquiries = InquiryData.searchByWord(word)
 
-      <table>
+      <table id="result">
         <thead><tr><th>ID</th><th>支線</th><th>概要</th></tr></thead>
         <tbody>
         {
